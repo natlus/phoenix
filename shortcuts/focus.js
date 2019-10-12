@@ -1,35 +1,34 @@
-
 /* IMPORT */
 
-require ( './magic/terminal.js' );
+// require('./magic/terminal.js');
 
 /* LAUNCHERS */
 
-const launchChrome = `
-  tell application "Google Chrome"
-    make new window
-    activate
-  end tell
-`;
+// const launchChrome = `
+//   tell application "${BROWSER}"
+//     make new window
+//     activate
+//   end tell
+// `;
 
-function launchDevTools () {
+function launchDevTools() {
+  const chrome = Space.active()
+    .windows()
+    .find(window => /Brave/.test(window.app().name()));
 
-  const chrome = Space.active ().windows ().find ( window => /Google Chrome/.test ( window.app ().name () ) );
+  if (!chrome) return alert(`${BROWSER} is not opened`);
 
-  if ( !chrome ) return alert ( 'Chrome is not opened' );
-
-  osascript (`
-    tell application "Google Chrome" to activate
-    tell application "System Events" to tell process "Google Chrome"
+  osascript(`
+    tell application "${BROWSER}" to activate
+    tell application "System Events" to tell process "${BROWSER}"
       click menu item "Developer Tools" of menu 1 of menu item "Developer" of menu 1 of menu bar item "View" of menu bar 1
     end tell
   `);
-
 }
 
-const launchVSC = () => Task.run ( '/usr/local/bin/code', ['-n'] );
+const launchVSC = () => Task.run('/usr/local/bin/code', ['-n']);
 
-const launchHyper = () => Task.run ( '/usr/local/bin/hyper' );
+const launchHyper = () => Task.run('/usr/local/bin/hyper');
 
 const launchiTerm = `
   if application "iTerm" is running then
@@ -62,66 +61,74 @@ const launchFinder = `
 
 /* CALLBACKS */
 
-function callbackTerminal ( isNewWindow ) {
+function callbackTerminal(isNewWindow) {
+  if (!isNewWindow) return;
 
-  if ( !isNewWindow ) return;
+  setTimeout(() => {
+    const focused = Window.focused();
 
-  setTimeout ( () => {
+    if (!focused) return;
 
-    const focused = Window.focused ();
-
-    if ( !focused ) return;
-
-    magicTerminalOpen ( focused );
-
-  }, 600 );
-
+    magicTerminalOpen(focused);
+  }, 600);
 }
 
-function callbackHyper ( isNewWindow ) {
+function callbackHyper(isNewWindow) {
+  if (!isNewWindow) return;
 
-  if ( !isNewWindow ) return;
+  setTimeout(() => {
+    const focused = Window.focused();
 
-  setTimeout ( () => {
+    if (!focused) return;
 
-    const focused = Window.focused ();
-
-    if ( !focused ) return;
-
-    magicHyperOpen ( focused );
-
-  }, 1200 );
-
+    magicHyperOpen(focused);
+  }, 1200);
 }
 
-function callbackiTerm ( isNewWindow ) {
+function callbackiTerm(isNewWindow) {
+  if (!isNewWindow) return;
 
-  if ( !isNewWindow ) return;
+  setTimeout(() => {
+    const focused = Window.focused();
 
-  setTimeout ( () => {
+    if (!focused) return;
 
-    const focused = Window.focused ();
-
-    if ( !focused ) return;
-
-    magiciTermOpen ( focused );
-
-  }, 600 );
-
+    magiciTermOpen(focused);
+  }, 600);
 }
 
 /* FOCUS */
 
 const focus = [
-  ['`', HYPER, ['Noty']],
-  ['c', HYPER, ['Google Chrome', false, /^(?!Developer Tools)/, /Picture in Picture/, launchChrome]],
-  ['d', HYPER, ['Google Chrome', true, /(Developer Tools)|(chrome-devtools)/, /Picture in Picture/, launchDevTools]],
-  ['v', HYPER, ['Code', false, false, false, launchVSC]],
+  // ['`', HYPER, ['Noty']],
+  // [
+  //   'c',
+  //   HYPER,
+  //   [
+  //     'Google Chrome',
+  //     false,
+  //     /^(?!Developer Tools)/,
+  //     /Picture in Picture/,
+  //     launchChrome,
+  //   ],
+  // ],
+  [
+    'd',
+    HYPER,
+    [
+      'Brave',
+      true,
+      /(Developer Tools)|(chrome-devtools)/,
+      /Picture in Picture/,
+      launchDevTools,
+    ],
+  ],
+  // ['c', HYPER, ['Code', false, false, false, launchVSC]],
   // ['t', HYPER, ['Terminal', false, false, false, launchTerminal, callbackTerminal]], //FIXME: Ugly, but since `windowDidOpen` won't trigger, at least now it will behave as expected
   // ['t', HYPER, ['Hyper', false, false, false, launchHyper, callbackHyper]], //FIXME: Ugly, but since `windowDidOpen` won't trigger, at least now it will behave as expected
-  ['t', HYPER, ['iTerm', false, false, false, launchiTerm, callbackiTerm]], //FIXME: Ugly, but since `windowDidOpen` won't trigger, at least now it will behave as expected
-  ['f', HYPER, ['Finder', false, false, false, launchFinder]],
-  ['g', HYPER, ['Tower']]
+  // ['t', HYPER, ['iTerm', false, false, false, launchiTerm, callbackiTerm]], //FIXME: Ugly, but since `windowDidOpen` won't trigger, at least now it will behave as expected
+  // ['f', HYPER, ['Finder', false, false, false, launchFinder]],
+  // ['g', HYPER, ['Tower']],
 ];
 
-setKeysHandler ( focusWindow, focus );
+setKeysHandler(focusWindow, focus);

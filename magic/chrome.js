@@ -11,7 +11,7 @@ function magicChromeOpen ( window ) {
 
   const name = window.app ().name ();
 
-  if ( !/Google Chrome/.test ( name ) ) return;
+  if ( !/Brave/.test ( name ) ) return;
 
   const title = window.title ();
 
