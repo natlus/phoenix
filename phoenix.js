@@ -38,7 +38,7 @@ require('./shortcuts/corners.js');
 require('./shortcuts/expand.js');
 require('./shortcuts/focus.js');
 require('./shortcuts/fullscreen.js');
-require('./shortcuts/info.js');
+// require('./shortcuts/info.js');
 require('./shortcuts/grow.js');
 require('./shortcuts/halves.js');
 require('./shortcuts/pause.js');
